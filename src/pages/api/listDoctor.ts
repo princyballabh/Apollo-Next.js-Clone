@@ -12,8 +12,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const filters: any = {};
             if (specialization) filters.specialization = specialization;
-            if (experience) filters.experience = { $gte: parseInt(experience as string) };
-            if (fee) filters.fee = { $lte: parseInt(fee as string) };
+            if (experience) {
+                const [minExperience, maxExperience] = (experience as string).split('-').map(Number);
+                if (!isNaN(minExperience) && !isNaN(maxExperience)) {
+                    filters.experience = { $gte: minExperience, $lte: maxExperience };
+                } else if (!isNaN(minExperience)) {
+                    filters.experience = { $gte: minExperience };
+                } else if (!isNaN(maxExperience)) {
+                    filters.experience = { $lte: maxExperience };
+                }
+            }
+            if (fee) {
+                const [minFee, maxFee] = (fee as string).split('-').map(Number);
+                if (!isNaN(minFee) && !isNaN(maxFee)) {
+                    filters.fee = { $gte: minFee, $lte: maxFee };
+                } else if (!isNaN(minFee)) {
+                    filters.fee = { $gte: minFee };
+                } else if (!isNaN(maxFee)) {
+                    filters.fee = { $lte: maxFee };
+                }
+            }
 
             const doctors = await collection
                 .find(filters)

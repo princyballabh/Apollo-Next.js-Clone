@@ -6,11 +6,11 @@ const options = {};
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
-if (!global._mongoClientPromise) {
+if (!globalThis._mongoClientPromise) {
     client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
+    globalThis._mongoClientPromise = client.connect();
 }
-clientPromise = global._mongoClientPromise;
+clientPromise = globalThis._mongoClientPromise;
 
 export async function connectToDatabase() {
     const client = await clientPromise;
