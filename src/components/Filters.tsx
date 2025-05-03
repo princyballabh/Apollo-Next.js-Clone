@@ -1,6 +1,8 @@
 import React from 'react';
 
-const Filters = ({ onFilterChange }: { onFilterChange: (filters: any) => void }) => {
+type FilterChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+const Filters = ({ onFilterChange }: { onFilterChange: FilterChangeHandler }) => {
     return (
         <aside className="filters">
             <h3>Filters</h3>

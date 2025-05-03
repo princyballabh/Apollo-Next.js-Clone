@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Filters from '../components/Filters';
 import DoctorCard from '../components/DoctorCard';
@@ -9,23 +9,23 @@ const Home = () => {
     const [doctors, setDoctors] = useState([]);
     const [filters, setFilters] = useState({});
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [totalPages] = useState(1);
     const [showForm, setShowForm] = useState(false);
 
     const toggleForm = () => {
         setShowForm(!showForm);
     };
 
-    const fetchDoctors = async () => {
+    const fetchDoctors = useCallback(async () => {
         const query = new URLSearchParams({ ...filters, page: page.toString(), limit: '10' });
         const response = await fetch(`/api/listDoctor?${query}`);
         const data = await response.json();
         setDoctors(data.doctors);
-    };
-
+    }, [filters, page]);
+    
     useEffect(() => {
         fetchDoctors();
-    }, [filters, page]);
+    }, [fetchDoctors]);
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFilters({ ...filters, [e.target.name]: e.target.value });

@@ -10,7 +10,7 @@ if (!globalThis._mongoClientPromise) {
     client = new MongoClient(uri, options);
     globalThis._mongoClientPromise = client.connect();
 }
-clientPromise = globalThis._mongoClientPromise;
+clientPromise = globalThis._mongoClientPromise as Promise<MongoClient>;
 
 export async function connectToDatabase() {
     const client = await clientPromise;

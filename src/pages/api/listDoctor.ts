@@ -1,4 +1,3 @@
-// filepath: src/pages/api/listDoctor.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { connectToDatabase } from '../../utils/db';
 
@@ -10,10 +9,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const db = await connectToDatabase();
             const collection = db.collection('doctors');
 
-            const filters: any = {};
-            if (specialization) filters.specialization = specialization;
+            type Filters = {
+                specialization?: string;
+                experience?: { $gte?: number; $lte?: number };
+                fee?: { $gte?: number; $lte?: number };
+            };
+
+            const filters: Filters = {};
+
+            // Handle specialization
+            if (specialization) {
+                const specializationStr = Array.isArray(specialization) ? specialization[0] : specialization;
+                filters.specialization = specializationStr;
+            }
+
+            // Handle experience
             if (experience) {
-                const [minExperience, maxExperience] = (experience as string).split('-').map(Number);
+                const experienceStr = Array.isArray(experience) ? experience[0] : experience;
+                const [minExperience, maxExperience] = experienceStr.split('-').map(Number);
                 if (!isNaN(minExperience) && !isNaN(maxExperience)) {
                     filters.experience = { $gte: minExperience, $lte: maxExperience };
                 } else if (!isNaN(minExperience)) {
@@ -22,8 +35,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     filters.experience = { $lte: maxExperience };
                 }
             }
+
+            // Handle fee
             if (fee) {
-                const [minFee, maxFee] = (fee as string).split('-').map(Number);
+                const feeStr = Array.isArray(fee) ? fee[0] : fee;
+                const [minFee, maxFee] = feeStr.split('-').map(Number);
                 if (!isNaN(minFee) && !isNaN(maxFee)) {
                     filters.fee = { $gte: minFee, $lte: maxFee };
                 } else if (!isNaN(minFee)) {

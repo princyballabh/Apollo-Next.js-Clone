@@ -1,6 +1,14 @@
 import React from 'react';
 
-const DoctorCard = ({ doctor }: { doctor: any }) => {
+type Doctor = {
+    name: string;
+    specialization: string;
+    experience: number;
+    location: string;
+    fee: number;
+};
+
+const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
     return (
         <div className="doctor-card">
             <div className="doctor-info">
