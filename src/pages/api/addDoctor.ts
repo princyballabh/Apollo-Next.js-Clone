@@ -20,8 +20,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await collection.insertOne(doctor);
             res.status(201).json({ message: 'Doctor added successfully' });
         } catch (error) {
-            console.error('Error adding doctor:', error);
-            res.status(500).json({ message: 'Internal Server Error', error: error.message });
+            if (error instanceof Error) {
+                console.error('Error adding doctor:', error);
+                res.status(500).json({ message: 'Internal Server Error', error: error.message });
+            } else {
+                console.error('Unknown error:', error);
+                res.status(500).json({ message: 'Internal Server Error', error: 'Unknown error' });
+            }
         }
     } else {
         res.status(405).json({ message: 'Method not allowed' });

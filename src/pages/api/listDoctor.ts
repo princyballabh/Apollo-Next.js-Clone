@@ -17,7 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const filters: Filters = {};
 
-            // Handle specialization
             if (specialization) {
                 const specializationStr = Array.isArray(specialization) ? specialization[0] : specialization;
                 filters.specialization = specializationStr;
@@ -57,8 +56,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             res.status(200).json({ doctors });
         } catch (error) {
-            console.error('Error fetching doctors:', error);
-            res.status(500).json({ message: 'Internal Server Error', error: error.message });
+            if (error instanceof Error) {
+                console.error('Error fetching doctors:', error);
+                res.status(500).json({ message: 'Internal Server Error', error: error.message });
+            } else {
+                console.error('Unknown error:', error);
+                res.status(500).json({ message: 'Internal Server Error', error: 'Unknown error' });
+            }
         }
     } else {
         res.status(405).json({ message: 'Method not allowed' });
