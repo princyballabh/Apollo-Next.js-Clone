@@ -7,14 +7,12 @@ declare global {
 const uri = process.env.MONGODB_URI || 'MONGODB_URI';
 const options = {};
 
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>; 
-
-if (!globalThis._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    globalThis._mongoClientPromise = client.connect();
-}
-clientPromise = globalThis._mongoClientPromise;
+const clientPromise: Promise<MongoClient> = globalThis._mongoClientPromise || (() => {
+    const client = new MongoClient(uri, options);
+    const promise = client.connect();
+    globalThis._mongoClientPromise = promise; 
+    return promise;
+})();
 
 export async function connectToDatabase() {
     const client = await clientPromise;
