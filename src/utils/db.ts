@@ -1,8 +1,10 @@
 import { MongoClient } from 'mongodb';
 
+/* eslint-disable no-var */
 declare global {
     var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
+/* eslint-enable no-var */
 
 const uri = process.env.MONGODB_URI || 'MONGODB_URI';
 const options = {};
